@@ -4,126 +4,101 @@
 
 # _*_ coding: utf-8 _*_
 
-#Import shuffle function from random library
-from random import shuffle
+#! /usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-# Set a createDeck function
-def createDeck():
-    Deck = []
+from random import shuffle              #import shuffle function from random module
 
-    #Set a variable for faceValues
-    faceValues = ['A', 'J', 'Q', 'K']
-    for i in range(4): # There are 4 different suites
-        for card in range(2,11): # Adding numbers 2-10
-            Deck.append(str(card))
+def createDeck():                       #define a function to Create the Deck
+    Deck = []                           #create Deck as a List
 
-        for card in faceValues:
-            Deck.append(card)
+    faceValues = ["A", "J", "Q", "K" ]  #define faceValues with a list
+    for i in range(4):                  #add values 4 times via a for loop so there are 4 different suits
 
-    shuffle(Deck) # Mixing results with shuffle
-    return Deck # Return products
+        for card in range(2,11):        #loop through values between 2 to 10 not including 11. tese numbers represent cards
+            Deck.append(str(card))      #add cards to Deck. converting Integers to Strins for more convinience
+        for card in faceValues:         #loop through faceValues list
+            Deck.append(card)           #add faceValues to Deck
 
-# Set a player class
-class Player:
-    def __init__(self,hand = [],money = 100):     #__init__ is the constructor for a class
-      self.hand = hand
-      self.score = self.setScore()
-      self.money = money
-      self.bet = 0
+    shuffle(Deck)                       #suffle the Deck
+    return Deck                         #return the Deck
 
-    def __str__(self):       #__str__ will return a human readable string
-      currentHand = " "
+class Player:                              #here we will be creating Player class
+    def __init__(self,hand = [],money = 100):        #__init__ function used to initialize a object. it is usually used to assign values for attributes of the object created by class
+       self.hand =   hand              #define hand attribute for the class player
+       self.score =  self.setScore()   #define score attribute for the Player and call to setScore function. return value from setScore will be assigned to score attribute
+       self.money =  money             #define money attribute for the class player
+       self.bet = 0                     #add a new attribute to Player called bet.
 
-      for card in self.hand:
-          currentHand  += str(card) + " "
+    def __str__(self):                 #overriding the __str__ function. it is used to print hand and score of the player
+        CurrentHand = ""               #define a temporary variable to hold the current cards of the player
+        for card in self.hand:         #loop through the player 'hand' and add each card to CurrentHand
+            CurrentHand += str(card) + " "  #it is more convinient to add cards as strings to CurrentHand. so use str(card)
 
-      #Set a variable for finalStatus, and then return it
-      finalStatus = currentHand + "score " + str(self.score)
-      return finalStatus
+        finalStaus = CurrentHand + "score: " + str(self.score) #finalStaus will be in the format  "A 10 score:21"  "A 10 2 score:23"
+        return finalStaus               #return finalStatus. which is printed by this function.
 
-    #Set a setScore function to count score, and then return it
-    def setScore(self) :
-        self.score = 0
-        #Set a Dictionary for faceCards
-        faceCardsDict = {"A":11,"J":10,"Q":10,"K":10,
-                        "2":2,"3":3,"4":4,"5":5,"6":6,
-                        "7":7,"8":8,"9":9,"10":10}
-        #Set a variable for aceCounter
-        aceCounter = 0
-        #Convert card into score
-        for card in self.hand:
+    def setScore(self):                 #define setScore method for player class
+        self.score = 0                  #it is good practice to initialize the variable.
+        faceCardsDict = {"A":11, "J":10, "Q":10, "K":10,            #create a Dictionary and map each card a value
+                         "2":2, "3":3, "4":4, "5":5, "6":6,
+                         "7":7, "8":8, "9":9, "10":10}
+        aceCounter = 0                              #You need to count the number of Aces. here counter is initialized.
+        for card in self.hand:                      #loop throught the hand of the player and add value of each card to players score
             self.score += faceCardsDict[card]
-            if card == "A":
-                aceCounter +=1
-            if self.score > 21 and aceCounter != 0:
-                self.score -= 10
-                aceCounter -= 1
+            if card == "A":                         #if the card is a Ace,
+                aceCounter +=1                      #then increment the aceCounter
+            if self.score > 21 and aceCounter != 0:  #if the acore is above 21 and player has a Ace
+                self.score -= 10                     #new Ace value will be 1. hence score will be reduced by 10
+                aceCounter -= 1                      #as one Ace is consumed, reduce 1 from aceCounter
 
-        return self.score
+        return self.score                            #return the score of the player
 
-    #Set a hit function to select a card, and then return it
-    def hit(self,card):
-        self.hand.append(card)
-        self.score = self.setScore()
+    def hit(self, card):                        #hit function is used to ada a card to hand
+        self.hand.append(card)                  #new card will be append to the Player's hand
+        self.score = self.setScore()            #player score will be recalculated
 
-    #Set a function to add new player
-    def play(self,newHand):
-        self.hand = newHand
-        self.score = self.setScore()
+    def play(self, newHand):                    #play function will be used to restart the game or resest the hand. it will take a 'hand' as an argument
+        self.hand = newHand                     #new hand will be assigned to Player's hand
+        self.score = self.setScore()            #recalculate the Player's score
 
-    #Set a function to put out money
-    def betMoney(self,amount):
-        self.money -= amount          # Decrease money from balance
-        self.bet += amount
+    def betMoney(self,amount):                  #change pay function to betMoney
+        self.money -= amount                    #reduce bet amount from player's money
+        self.bet += amount                      #add bet amount to Player's bet amount
 
-    #Set a function for winner
-    def win(self,result):
-        if result == True:
-            if self.score == 21 and len(self.hand) == 2: # Set required score for winning blackjack
-                self.money += 2.5*self.bet               # if player win with a blackjack
-            else:
-                self.money += 2*self.bet                 # if player win without a blackjack
-
-            self.bet = 0                                 # Reset the bet
+    def win(self, result):                      #change win function. now it takes boolean argument.
+        if result == True:                      #if win funtion recieve true
+            if self.score == 21 and len(self.hand) == 2:   #if Blackjack is earned
+                self.money += 2.5 * self.bet                #2.5 times of bet amount will be added to Player's money.
+            else:                                   #if win but not a Blackjack
+                self.money += 2 * self.bet          #two times of bet amount will be added to Players money
+            self.bet = 0                        #we should erase bet amount after that
         else:
-            self.bet = 0                                 # If player loose a bet
+            self.bet = 0                        #if player is lost we only have to do erase bet amount. so it won't effect future play
 
-# Set a printHouse function to print the house and score
-def printHouse(House):
-    for card in range(len(House.hand)):
-        if card == 0:
-            print("X",end = " ")
-        elif card == len(House.hand) -1:
-			print(House.hand[card])
-        else:
-            print(House.hand[card], end = " ")
+def printHouse(House):                          #this method will print all cards of House except first card
+    for card in range(len(House.hand)):         #loop through the hand of House
+        if card == 0:                           #if it is the first card
+            print("X", end=" ")                 #just print 'X'. continue printing in same line with space gap
+        elif card == len(House.hand) - 1:       #if the card is the last one in the hand
+            print(House.hand[card])             #just print it. no need of space
+        else:                                   #else
+            print(House.hand[card], end=" ")    #just print the card and keep a gap of space
 
-#Set a variable to createDock function, and then print it
-cardDeck = createDeck()
-print(cardDeck)
+cardDeck = createDeck()                             #what is returned from the createDeck() function will be assigned to 'cardDeck'
+print(cardDeck)                                     #print the cardDeck
+firstHand = [cardDeck.pop(),cardDeck.pop()]         #add last two cards to firstHand,
+secondHand = [cardDeck.pop(),cardDeck.pop()]        #add next last two cards to secondHand
+Player1 = Player(firstHand)                         #Player1 recieve firstHand
+House = Player(secondHand)                          #House recieve secondHand
+print(Player1)                                      #Print hand and score of Player1
+printHouse(House)                                   #Print hand and score of House
 
-# Pop function select the last shuffle number
-
-# Set a variable for First players last shuffle number
-firstHand =[cardDeck.pop(),cardDeck.pop()]
-
-# Set a variable for Second players last shuffle number
-secondHand = [cardDeck.pop(),cardDeck.pop()]
-
-# Set a variable to First player score, and then print it
-Player1 = Player(firstHand)
-print(Player1)
-
-# Set a variable to Second player score, and then print it
-House = Player(secondHand)
-printHouse(House)
-
-# if players score is below 21, ask him to add more card
-while(Player1.score < 21):# While (true==true)
-    action = input("Do you want another card?(y/n): ")
-    if action == "y":
-        Player1.hit(cardDeck.pop())
-        print(Player1)
-        printHouse(House)
+while(Player1.score < 21):                          #this loop will continue as long as Player1 score is less than 21
+    action = input("Do you want another card?(y/n)") #ask from user whether he needs another card. recieve user input
+    if action == "y":                               #if he press 'y'
+        Player1.hit(cardDeck.pop())                 #Player1 recieve a new card
+        print(Player1)                              #Print hand and score of Player1
+        printHouse(House)                           #Print hand and score of House
     else:
-        break
+        break                                       #if user press 'n', exit the loop

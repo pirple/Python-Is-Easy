@@ -1,0 +1,21 @@
+numbers= 1
+sum = 0
+while(numbers<=100):
+    print(numbers)
+    sum = sum + numbers
+    numbers = numbers +1
+
+print(sum)
+for numbers in range(100):
+    if numbers%3 == 0:
+        print(numbers)
+        print("fizz")
+        continue
+    if numbers%5 == 0:
+        print(numbers)
+        print("buzz")
+for numbers in range(100):
+    if numbers%3==0 and numbers%5 == 0:
+        print(numbers)
+        print("fizzbuzz")
+
